@@ -1,0 +1,52 @@
+{% extends "ontology/base.html" %}
+{% load staticfiles %}
+
+{% block ontology_content %}
+    <h1>{{title}}</h1>
+    <div>
+        <h2>Properties</h2>
+        <table class="table">
+            <tr>
+                <th>Property</th>
+                <th>Values</th>
+            </tr>
+            {% for label, ref, objects in properties %}
+                <tr>
+                    <td><a href="{{ref}}">{{label}}</a></td>
+                    <td>
+                        <ul>
+                            {% for o_label, o_ref in objects %}
+                            <li>
+                                <a href="{{o_ref}}">
+                                    {{o_label}}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% if individuals %}
+        <div>
+            <h2>Individuals</h2>
+            <table class="table">
+                <tr>
+                    <th> Name </th>
+                    <th> Definition </th>
+                </tr>
+                {% for label, ref, definition in individuals %}
+                    <tr>
+                        <td> <a href="{{ref}}">
+                             {{label}}</a>
+                        </td>
+                        <td> {{ definition }} </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endif %}
+
+
+{% endblock %}

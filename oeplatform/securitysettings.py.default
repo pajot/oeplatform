@@ -61,5 +61,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+RDF_DATABASE = {
+    'host': 'localhost',
+    'port': 5820,
+    'name': ''
+}
+
 if not DEBUG:
     AUTHENTICATION_BACKENDS = ['login.models.UserBackend']

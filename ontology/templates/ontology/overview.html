@@ -1,0 +1,32 @@
+{% extends "ontology/base.html" %}
+{% load staticfiles %}
+
+{% block ontology_content %}
+    <h1>The Open Energy Ontology (OEO)</h1>
+    <div>
+        <h2>Scenarios</h2>
+        <table class="table">
+        <tr> <th>Name</th> <th>Definition</th> </tr>
+        {% for label, ref, type in scenarios %}
+            <tr>
+                <td> <a href="{{ref}}">{{label}}</a>
+                        </td>
+                        <td> {{ definition }} </td>
+                <td>{{type}}</td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+    <div>
+        <h2>Classes</h2>
+        <table class="table">
+        <tr> <th>Name</th> <th>Definition</th> </tr>
+        {% for label, ref, type in classes %}
+            <tr>
+                <td><a href="{{ref}}">{{label}}</a></td>
+                <td>{{type}}</td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+{% endblock %}
