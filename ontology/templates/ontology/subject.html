@@ -17,9 +17,13 @@
                         <ul>
                             {% for o_label, o_ref in objects %}
                             <li>
+                                {% if o_ref %}
                                 <a href="{{o_ref}}">
                                     {{o_label}}
                                 </a>
+                                {% else %}
+                                    {{o_label}}
+                                {% endif %}
                             </li>
                             {% endfor %}
                         </ul>

@@ -1,8 +1,10 @@
 from rdflib.plugins.stores import sparqlstore
-from rdflib import Graph
+from rdflib import Graph, BNode, URIRef
+from rdflib.term import Node
 from oeplatform.securitysettings import RDF_DATABASES, URL
 from SPARQLWrapper.SPARQLExceptions import QueryBadFormed
 
+import typing
 from django.forms import Widget
 
 OEO_ENDPOINT = 'http://{host}:{port}/{name}/query'.format(**RDF_DATABASES['oeo'])
@@ -10,7 +12,7 @@ KNOWLEDGE_ENDPOINT = 'http://{host}:{port}/{name}/query'.format(**RDF_DATABASES[
 
 _ONTOLOGY_URL = 'http://openenergy-platform.org/ontology/'
 _OEO_URL = _ONTOLOGY_URL + 'oeo/'
-_KNOWLEDGE_URL = _ONTOLOGY_URL + 'knowledge/'
+_KNOWLEDGE_URL = 'http://localhost:8000/ontology/knowledge/'
 
 _ONTOLOGY_URL_V = 'http://openenergy-platform.org/ontology/v0.0.1/'
 _OEO_URL_V = _ONTOLOGY_URL_V + 'oeo/'
@@ -26,7 +28,8 @@ _PREFIX = {
     'xsd': 'http://www.w3.org/2001/XMLSchema',
     'dc': 'http://purl.org/dc/elements/1.1',
     'foaf': 'http://xmlns.com/foaf/0.1',
-    'oek': _ONTOLOGY_URL + 'knowledge',
+    'oek': 'http://localhost:8000/ontology/knowledge',
+    'obo': 'http://purl.obolibrary.org/obo',
     'oeo': _ONTOLOGY_URL + 'oeo',
 }
 _INV_PREFIX = {v:k for k,v in _PREFIX.items()}
@@ -39,6 +42,15 @@ def localise(string):
         return string.replace('openenergy-platform.org', URL)
 
 
+def render_node(node: Node) -> typing.Tuple[str, typing.Optional[str]]:
+    if isinstance(node, URIRef):
+        string = str(node)
+        return use_prefix(string)
+    elif isinstance(node, BNode):
+         pass
+    else:
+        return use_prefix(node)
+
 def use_prefix(string):
     if '#' in string:
         prefix, name = string.split('#')
@@ -49,7 +61,7 @@ def use_prefix(string):
     if prefix in _INV_PREFIX:
         return (_INV_PREFIX[prefix] + ':' + name, localise(string))
     else:
-        return (string, localise(string))
+        return (localise(string), None)
 
 
 def load_all_scenarios():
@@ -76,6 +88,16 @@ def load_all_classes():
         label, ref = use_prefix(subject)
         yield label, ref, definition
 
+
+def load_all_properties():
+    query = 'select ?p where { ' \
+            '?s ?p ?o. ' \
+            '}'
+    for subject in request(query, OEO_ENDPOINT):
+        label, ref = use_prefix(subject[0])
+        yield label, ref
+
+
 def load_individuals(cls_iri):
     query = 'select ?s (sample(?d) as ?description) where {{ ' \
             '?s a <http://www.w3.org/2002/07/owl#NamedIndividual>,' \
@@ -101,18 +123,20 @@ def load_individuals(cls_iri):
 def load_subject(iri, database='oeo'):
     endpoint = None
     if database == 'knowledge':
-        iri = _KNOWLEDGE_URL + iri
+        iri = 'http://localhost:8000/ontology/knowledge/' + iri
         endpoint = KNOWLEDGE_ENDPOINT
     elif database == 'oeo':
         iri = _OEO_URL + iri
         endpoint = OEO_ENDPOINT
 
-    query = 'select ?p (group_concat (distinct ?o ; separator = ";") as ?items) ' \
-            'where {{ <{iri}> ?p ?o }} group by ?p'.format(iri=iri)
-    for predicate, objects in request(query, endpoint):
+    query = 'select ?p ?o ' \
+            'where {{ <{iri}> ?p ?o }}'.format(iri=iri)
+    all_results = list(request(query, endpoint))
+    result_dict = {key: [use_prefix(value) for (key2, value) in all_results if key==key2] for (key,_) in all_results}
+    for predicate, objects in result_dict.items():
         if predicate is not None:
             name, ref = use_prefix(predicate)
-            yield name, ref, [use_prefix(o) for o in objects.split(';')]
+            yield name, ref, objects
 
 
 def request(query, endpoint):
@@ -121,6 +145,6 @@ def request(query, endpoint):
     :param endpoint: A RDFLib connection string
     :return:
     """
-    store = sparqlstore.SPARQLStore()
+    store = sparqlstore.SPARQLStore(node_from_result=id)
     store.open(endpoint)
     return store.query(query)
