@@ -1,39 +1,35 @@
 import json
 
-from api.tests import APITestCase
+from api.tests import APITestCaseWithTable
 
 
-class Test270(APITestCase):
-    def setUp(self):
-        super(Test270, self).setUp()
-        structure = {
-            "constraints": [
-                {
-                    "constraint_type": "PRIMARY KEY",
-                    "constraint_parameter": "id",
-                    "reference_table": None,
-                    "reference_column": None,
-                }
-            ],
-            "columns": [
-                {
-                    "name": "id",
-                    "data_type": "bigserial",
-                    "is_nullable": False,
-                    "character_maximum_length": None,
-                },
-                {
-                    "name": "name",
-                    "data_type": "character varying",
-                    "is_nullable": True,
-                    "character_maximum_length": 123,
-                },
-            ],
-        }
+class Test270(APITestCaseWithTable):
+    structure_data = {
+        "constraints": [
+            {
+                "constraint_type": "PRIMARY KEY",
+                "constraint_parameter": "id",
+                "reference_table": None,
+                "reference_column": None,
+            }
+        ],
+        "columns": [
+            {
+                "name": "id",
+                "data_type": "bigserial",
+                "is_nullable": False,
+                "character_maximum_length": None,
+            },
+            {
+                "name": "name",
+                "data_type": "character varying",
+                "is_nullable": True,
+                "character_maximum_length": 123,
+            },
+        ],
+    }
 
-        data = [{"name": "Hans"}, {"name": "Petra"}, {"name": "Dieter"}]
-
-        self.create_table(structure, data=data)
+    data = [{"name": "Hans"}, {"name": "Petra"}, {"name": "Dieter"}]
 
     def test_270(self):
         self.check_api_get(
@@ -45,6 +41,3 @@ class Test270(APITestCase):
             ),
             expected_result=[{"name": "Petra", "id": 2}],
         )
-
-    def tearDown(self):
-        self.drop_table()
