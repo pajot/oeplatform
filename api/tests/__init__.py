@@ -160,7 +160,7 @@ class APITestCase(TestCase):
 
         resp = self.__class__.client.delete(
             "/api/v0/schema/{schema}/tables/{table}/".format(
-                schema=self.test_schema, table=self.test_table
+                schema=schema, table=table
             ),
             HTTP_AUTHORIZATION="Token %s" % self.__class__.token,
             content_type="application/json",
@@ -170,5 +170,33 @@ class APITestCase(TestCase):
             resp.status_code, 200, resp.json().get("reason", "No reason returned")
         )
 
-class APITestCaseWithTable(TestCase):
-    pass
+
+class APITestCaseWithTable(APITestCase):
+    structure_data = {
+        "constraints": [
+            {
+                "constraint_type": "PRIMARY KEY",
+                "constraint_parameter": "id",
+                "reference_table": None,
+                "reference_column": None,
+            }
+        ],
+        "columns": [
+            {
+                "name": "id",
+                "data_type": "bigserial",
+                "is_nullable": False,
+                "character_maximum_length": None,
+            },
+        ],
+    }
+
+    data = None
+
+    def setUp(self) -> None:
+        super(APITestCaseWithTable, self).setUp()
+        self.create_table(self.structure_data, data=self.data, schema=self.test_schema, table=self.test_table)
+
+    def tearDown(self) -> None:
+        super(APITestCaseWithTable, self).setUp()
+        self.drop_table(schema=self.test_schema, table=self.test_table)

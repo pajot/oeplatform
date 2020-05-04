@@ -4,90 +4,42 @@ from shapely import wkb, wkt
 
 from api import actions
 
-from . import APITestCase
+from . import APITestCaseWithTable
 from .util import content2json, load_content, load_content_as_json
 
 
-class TestPut(APITestCase):
-    def setUp(self):
-        super(TestPut, self).setUp()
-        structure_data = {
-            "constraints": [
-                {
-                    "constraint_type": "PRIMARY KEY",
-                    "constraint_parameter": "id",
-                    "reference_table": None,
-                    "reference_column": None,
-                }
-            ],
-            "columns": [
-                {
-                    "name": "id",
-                    "data_type": "bigserial",
-                    "is_nullable": False,
-                    "character_maximum_length": None,
-                },
-                {
-                    "name": "name",
-                    "data_type": "character varying",
-                    "is_nullable": True,
-                    "character_maximum_length": 50,
-                },
-                {
-                    "name": "address",
-                    "data_type": "character varying",
-                    "is_nullable": True,
-                    "character_maximum_length": 150,
-                },
-                {"name": "geom", "data_type": "Geometry (Point)", "is_nullable": True},
-            ],
-        }
-
-        c_basic_resp = self.__class__.client.put(
-            "/api/v0/schema/{schema}/tables/{table}/".format(
-                schema=self.test_schema, table=self.test_table
-            ),
-            data=json.dumps({"query": structure_data}),
-            HTTP_AUTHORIZATION="Token %s" % self.__class__.token,
-            content_type="application/json",
-        )
-
-        assert c_basic_resp.status_code == 201, c_basic_resp.json().get(
-            "reason", "No reason returned"
-        )
-
-    def tearDown(self):
-        meta_schema = actions.get_meta_schema_name(self.test_schema)
-        if actions.has_table(dict(table=self.test_table, schema=self.test_schema)):
-            actions.perform_sql(
-                "DROP TABLE IF EXISTS {schema}.{table} CASCADE".format(
-                    schema=meta_schema,
-                    table=actions.get_insert_table_name(
-                        self.test_schema, self.test_table
-                    ),
-                )
-            )
-            actions.perform_sql(
-                "DROP TABLE IF EXISTS {schema}.{table} CASCADE".format(
-                    schema=meta_schema,
-                    table=actions.get_edit_table_name(
-                        self.test_schema, self.test_table
-                    ),
-                )
-            )
-            actions.perform_sql(
-                "DROP TABLE IF EXISTS {schema}.{table} CASCADE".format(
-                    schema=meta_schema,
-                    table=actions.get_delete_table_name(
-                        self.test_schema, self.test_table
-                    ),
-                )
-            )
-            actions.perform_sql(
-                "DROP TABLE IF EXISTS {schema}.{table} CASCADE".format(
-                    schema=self.test_schema, table=self.test_table
-                )
-            )
+class TestPut(APITestCaseWithTable):
+    structure_data = {
+        "constraints": [
+            {
+                "constraint_type": "PRIMARY KEY",
+                "constraint_parameter": "id",
+                "reference_table": None,
+                "reference_column": None,
+            }
+        ],
+        "columns": [
+            {
+                "name": "id",
+                "data_type": "bigserial",
+                "is_nullable": False,
+                "character_maximum_length": None,
+            },
+            {
+                "name": "name",
+                "data_type": "character varying",
+                "is_nullable": True,
+                "character_maximum_length": 50,
+            },
+            {
+                "name": "address",
+                "data_type": "character varying",
+                "is_nullable": True,
+                "character_maximum_length": 150,
+            },
+            {"name": "geom", "data_type": "Geometry (Point)", "is_nullable": True},
+        ],
+    }
 
     def test_put_with_id(self):
         row = {"id": 1, "name": "John Doe", "address": None}
@@ -269,96 +221,38 @@ class TestPut(APITestCase):
         self.assertEqual(response.status_code, 403, response.json())
 
 
-class TestPost(APITestCase):
-    def setUp(self):
-        self.rows = [
+class TestPost(APITestCaseWithTable):
+    structure_data = {
+        "constraints": [
             {
-                "id": 1,
-                "name": "John Doe",
-                "address": None,
-                "geom": "Point(-71.160281 42.258729)",
+                "constraint_type": "PRIMARY KEY",
+                "constraint_parameter": "id",
+                "reference_table": None,
+                "reference_column": None,
             }
-        ]
-        self.test_table = "test_table_rows"
-        self.test_schema = "test"
-        structure_data = {
-            "constraints": [
-                {
-                    "constraint_type": "PRIMARY KEY",
-                    "constraint_parameter": "id",
-                    "reference_table": None,
-                    "reference_column": None,
-                }
-            ],
-            "columns": [
-                {
-                    "name": "id",
-                    "data_type": "bigserial",
-                    "is_nullable": False,
-                    "character_maximum_length": None,
-                },
-                {
-                    "name": "name",
-                    "data_type": "character varying",
-                    "is_nullable": True,
-                    "character_maximum_length": 50,
-                },
-                {
-                    "name": "address",
-                    "data_type": "character varying",
-                    "is_nullable": True,
-                    "character_maximum_length": 150,
-                },
-                {"name": "geom", "data_type": "geometry (point)", "is_nullable": True},
-            ],
-        }
-
-        c_basic_resp = self.__class__.client.put(
-            "/api/v0/schema/{schema}/tables/{table}/".format(
-                schema=self.test_schema, table=self.test_table
-            ),
-            data=json.dumps({"query": structure_data}),
-            HTTP_AUTHORIZATION="Token %s" % self.__class__.token,
-            content_type="application/json",
-        )
-
-        assert c_basic_resp.status_code == 201, "Returned %d: %s" % (
-            c_basic_resp.status_code,
-            c_basic_resp.json().get("reason", "No reason returned"),
-        )
-
-    def tearDown(self):
-        meta_schema = actions.get_meta_schema_name(self.test_schema)
-        if actions.has_table(dict(table=self.test_table, schema=self.test_schema)):
-            actions.perform_sql(
-                "DROP TABLE IF EXISTS {schema}.{table} CASCADE".format(
-                    schema=meta_schema,
-                    table=actions.get_insert_table_name(
-                        self.test_schema, self.test_table
-                    ),
-                )
-            )
-            actions.perform_sql(
-                "DROP TABLE IF EXISTS {schema}.{table} CASCADE".format(
-                    schema=meta_schema,
-                    table=actions.get_edit_table_name(
-                        self.test_schema, self.test_table
-                    ),
-                )
-            )
-            actions.perform_sql(
-                "DROP TABLE IF EXISTS {schema}.{table} CASCADE".format(
-                    schema=meta_schema,
-                    table=actions.get_delete_table_name(
-                        self.test_schema, self.test_table
-                    ),
-                )
-            )
-            actions.perform_sql(
-                "DROP TABLE IF EXISTS {schema}.{table} CASCADE".format(
-                    schema=self.test_schema, table=self.test_table
-                )
-            )
+        ],
+        "columns": [
+            {
+                "name": "id",
+                "data_type": "bigserial",
+                "is_nullable": False,
+                "character_maximum_length": None,
+            },
+            {
+                "name": "name",
+                "data_type": "character varying",
+                "is_nullable": True,
+                "character_maximum_length": 50,
+            },
+            {
+                "name": "address",
+                "data_type": "character varying",
+                "is_nullable": True,
+                "character_maximum_length": 150,
+            },
+            {"name": "geom", "data_type": "geometry (point)", "is_nullable": True},
+        ],
+    }
 
     def test_simple_post_new(self, rid=1):
         row = {
@@ -523,118 +417,48 @@ class TestPost(APITestCase):
         self.assertListEqual(content, rows)
 
 
-class TestGet(APITestCase):
-
-    def setUp(cls):
-        super(TestGet, cls).setUp()
-        cls.rows = [
+class TestGet(APITestCaseWithTable):
+    structure_data = {
+        "constraints": [
             {
-                "id": 1,
-                "name": "John Doe",
-                "address": None,
-                "geom": "Point(-71.160281 42.258729)",
+                "constraint_type": "PRIMARY KEY",
+                "constraint_parameter": "id",
+                "reference_table": None,
+                "reference_column": None,
             }
-        ]
-        cls.test_table = "test_table_rows"
-        structure_data = {
-            "constraints": [
-                {
-                    "constraint_type": "PRIMARY KEY",
-                    "constraint_parameter": "id",
-                    "reference_table": None,
-                    "reference_column": None,
-                }
-            ],
-            "columns": [
-                {
-                    "name": "id",
-                    "data_type": "bigserial",
-                    "is_nullable": False,
-                    "character_maximum_length": None,
-                },
-                {
-                    "name": "name",
-                    "data_type": "character varying",
-                    "is_nullable": True,
-                    "character_maximum_length": 50,
-                },
-                {
-                    "name": "address",
-                    "data_type": "character varying",
-                    "is_nullable": True,
-                    "character_maximum_length": 150,
-                },
-                {"name": "geom", "data_type": "geometry (point)", "is_nullable": True},
-            ],
+        ],
+        "columns": [
+            {
+                "name": "id",
+                "data_type": "bigserial",
+                "is_nullable": False,
+                "character_maximum_length": None,
+            },
+            {
+                "name": "name",
+                "data_type": "character varying",
+                "is_nullable": True,
+                "character_maximum_length": 50,
+            },
+            {
+                "name": "address",
+                "data_type": "character varying",
+                "is_nullable": True,
+                "character_maximum_length": 150,
+            },
+            {"name": "geom", "data_type": "geometry (point)", "is_nullable": True},
+        ],
+    }
+
+    data = [
+        {
+            "id": i,
+            "name": "Mary Doe",
+            "address": "Mary's Street",
+            "geom": "0101000000E44A3D0B42CA51C06EC328081E214540",
         }
-
-        c_basic_resp = cls.client.put(
-            "/api/v0/schema/{schema}/tables/{table}/".format(
-                schema=cls.test_schema, table=cls.test_table
-            ),
-            data=json.dumps({"query": structure_data}),
-            HTTP_AUTHORIZATION="Token %s" % cls.token,
-            content_type="application/json",
-        )
-
-        assert c_basic_resp.status_code == 201, c_basic_resp.json()
-
-        cls.rows = [
-            {
-                "id": i,
-                "name": "Mary Doe",
-                "address": "Mary's Street",
-                "geom": "0101000000E44A3D0B42CA51C06EC328081E214540",
-            }
-            for i in range(100)
-        ]
-
-        response = cls.client.post(
-            "/api/v0/schema/{schema}/tables/{table}/rows/new".format(
-                schema=cls.test_schema, table=cls.test_table
-            ),
-            data=json.dumps({"query": cls.rows}),
-            HTTP_AUTHORIZATION="Token %s" % cls.token,
-            content_type="application/json",
-        )
-
-        assert response.status_code == 201, response.json().get(
-            "reason", "No reason returned"
-        )
-
-    def tearDown(self):
-        super(TestGet, self).tearDown()
-        meta_schema = actions.get_meta_schema_name(self.test_schema)
-        if actions.has_table(dict(table=self.test_table, schema=self.test_schema)):
-            actions.perform_sql(
-                "DROP TABLE IF EXISTS {schema}.{table} CASCADE".format(
-                    schema=meta_schema,
-                    table=actions.get_insert_table_name(
-                        self.test_schema, self.test_table
-                    ),
-                )
-            )
-            actions.perform_sql(
-                "DROP TABLE IF EXISTS {schema}.{table} CASCADE".format(
-                    schema=meta_schema,
-                    table=actions.get_edit_table_name(
-                        self.test_schema, self.test_table
-                    ),
-                )
-            )
-            actions.perform_sql(
-                "DROP TABLE IF EXISTS {schema}.{table} CASCADE".format(
-                    schema=meta_schema,
-                    table=actions.get_delete_table_name(
-                        self.test_schema, self.test_table
-                    ),
-                )
-            )
-            actions.perform_sql(
-                "DROP TABLE IF EXISTS {schema}.{table} CASCADE".format(
-                    schema=self.test_schema, table=self.test_table
-                )
-            )
+        for i in range(100)
+    ]
 
     def test_simple_get(self):
         response = self.__class__.client.get(
@@ -647,7 +471,7 @@ class TestGet(APITestCase):
 
         self.assertEqual(response.status_code, 200, content)
 
-        for c in zip(content, self.rows):
+        for c in zip(content, self.data):
             self.assertDictEqualKeywise(*c)
 
     def test_simple_offset(self):
@@ -661,7 +485,7 @@ class TestGet(APITestCase):
 
         self.assertEqual(response.status_code, 200, content)
 
-        for c in zip(content, self.rows[50:]):
+        for c in zip(content, self.data[50:]):
             self.assertDictEqualKeywise(*c)
 
     def test_simple_limit(self):
@@ -681,7 +505,7 @@ class TestGet(APITestCase):
         )
         content = load_content_as_json(response)
         self.assertEqual(response.status_code, 200, content)
-        for c in zip(content, [row for row in self.rows if row["id"] >= 50]):
+        for c in zip(content, [row for row in self.data if row["id"] >= 50]):
             self.assertDictEqualKeywise(*c)
 
     def test_simple_order_by(self):
@@ -696,124 +520,56 @@ class TestGet(APITestCase):
 
         content = content2json(content)
         for c in zip(
-            content, sorted([row for row in self.rows], key=lambda x: x["id"])
+            content, sorted([row for row in self.data], key=lambda x: x["id"])
         ):
             self.assertDictEqualKeywise(*c)
 
 
-class TestDelete(APITestCase):
-    def setUp(self):
-        super(TestDelete, self).setUp()
-        self.rows = [
-            {
-                "id": 1,
-                "name": "John Doe",
-                "address": None,
-                "geom": "Point(-71.160281 42.258729)",
-            }
-        ]
-        structure_data = {
-            "constraints": [
-                {
-                    "constraint_type": "PRIMARY KEY",
-                    "constraint_parameter": "id",
-                    "reference_table": None,
-                    "reference_column": None,
-                }
-            ],
-            "columns": [
-                {
-                    "name": "id",
-                    "data_type": "bigserial",
-                    "is_nullable": False,
-                    "character_maximum_length": None,
-                },
-                {
-                    "name": "name",
-                    "data_type": "character varying",
-                    "is_nullable": True,
-                    "character_maximum_length": 50,
-                },
-                {
-                    "name": "address",
-                    "data_type": "character varying",
-                    "is_nullable": True,
-                    "character_maximum_length": 150,
-                },
-                {"name": "geom", "data_type": "geometry (point)", "is_nullable": True},
-            ],
+class TestDelete(APITestCaseWithTable):
+
+    data = [
+        {
+            "id": i,
+            "name": "Mary Doe",
+            "address": "Mary's Street",
+            "geom": "0101000000E44A3D0B42CA51C06EC328081E214540",
         }
-
-        c_basic_resp = self.client.put(
-            "/api/v0/schema/{schema}/tables/{table}/".format(
-                schema=self.test_schema, table=self.test_table
-            ),
-            data=json.dumps({"query": structure_data}),
-            HTTP_AUTHORIZATION="Token %s" % self.token,
-            content_type="application/json",
-        )
-
-        assert c_basic_resp.status_code == 201, c_basic_resp.json()
-
-        self.rows = [
+        for i in range(100)
+    ]
+    structure_data = {
+        "constraints": [
             {
-                "id": i,
-                "name": "Mary Doe",
-                "address": "Mary's Street",
-                "geom": "0101000000E44A3D0B42CA51C06EC328081E214540",
+                "constraint_type": "PRIMARY KEY",
+                "constraint_parameter": "id",
+                "reference_table": None,
+                "reference_column": None,
             }
-            for i in range(100)
-        ]
-
-        response = self.client.post(
-            "/api/v0/schema/{schema}/tables/{table}/rows/new".format(
-                schema=self.test_schema, table=self.test_table
-            ),
-            data=json.dumps({"query": self.rows}),
-            HTTP_AUTHORIZATION="Token %s" % self.token,
-            content_type="application/json",
-        )
-
-        assert response.status_code == 201, response.json().get(
-            "reason", "No reason returned"
-        )
-
-    def tearDown(self):
-        super(TestDelete, self).tearDown()
-        meta_schema = actions.get_meta_schema_name(self.test_schema)
-        if actions.has_table(dict(table=self.test_table, schema=self.test_schema)):
-            actions.perform_sql(
-                "DROP TABLE IF EXISTS {schema}.{table} CASCADE".format(
-                    schema=meta_schema,
-                    table=actions.get_insert_table_name(
-                        self.test_schema, self.test_table
-                    ),
-                )
-            )
-            actions.perform_sql(
-                "DROP TABLE IF EXISTS {schema}.{table} CASCADE".format(
-                    schema=meta_schema,
-                    table=actions.get_edit_table_name(
-                        self.test_schema, self.test_table
-                    ),
-                )
-            )
-            actions.perform_sql(
-                "DROP TABLE IF EXISTS {schema}.{table} CASCADE".format(
-                    schema=meta_schema,
-                    table=actions.get_delete_table_name(
-                        self.test_schema, self.test_table
-                    ),
-                )
-            )
-            actions.perform_sql(
-                "DROP TABLE IF EXISTS {schema}.{table} CASCADE".format(
-                    schema=self.test_schema, table=self.test_table
-                )
-            )
+        ],
+        "columns": [
+            {
+                "name": "id",
+                "data_type": "bigserial",
+                "is_nullable": False,
+                "character_maximum_length": None,
+            },
+            {
+                "name": "name",
+                "data_type": "character varying",
+                "is_nullable": True,
+                "character_maximum_length": 50,
+            },
+            {
+                "name": "address",
+                "data_type": "character varying",
+                "is_nullable": True,
+                "character_maximum_length": 150,
+            },
+            {"name": "geom", "data_type": "geometry (point)", "is_nullable": True},
+        ],
+    }
 
     def test_simple(self):
-        row = self.rows.pop()
+        row = self.data.pop()
         response = self.__class__.client.delete(
             "/api/v0/schema/{schema}/tables/{table}/rows/{rid}".format(
                 schema=self.test_schema, table=self.test_table, rid=row["id"]
@@ -835,13 +591,13 @@ class TestDelete(APITestCase):
             "/api/v0/schema/{schema}/tables/{table}/rows/".format(
                 schema=self.test_schema, table=self.test_table
             ),
-            expected_result=self.rows,
+            expected_result=self.data,
         )
 
     def test_where(self):
-        row = self.rows[10]
-        deleted = [r for r in self.rows if r["id"] <= row["id"]]
-        self.rows = [r for r in self.rows if r["id"] > row["id"]]
+        row = self.data[10]
+        deleted = [r for r in self.data if r["id"] <= row["id"]]
+        rows = [r for r in self.data if r["id"] > row["id"]]
         response = self.__class__.client.delete(
             "/api/v0/schema/{schema}/tables/{table}/rows/?where=id<={rid}".format(
                 schema=self.test_schema, table=self.test_table, rid=row["id"]
@@ -869,4 +625,4 @@ class TestDelete(APITestCase):
         content = load_content(response)
         self.assertEqual(response.status_code, 200, content)
         content = content2json(content)
-        self.assertListEqual(content, self.rows)
+        self.assertListEqual(content, rows)
