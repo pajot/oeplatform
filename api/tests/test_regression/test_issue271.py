@@ -9,6 +9,7 @@ from ..util import load_content_as_json
 
 class Test271(APITestCase):
     def setUp(self):
+        super(Test271, self).setUp()
         self._structure_data = {
             "constraints": [
                 {

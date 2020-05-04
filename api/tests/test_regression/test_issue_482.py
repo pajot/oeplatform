@@ -9,6 +9,7 @@ from ..util import load_content_as_json
 
 class TestAliasesTracking(APITestCase):
     def setUp(self):
+        super(TestAliasesTracking, self).setUp()
         self._structure_data = {
             "constraints": [
                 {

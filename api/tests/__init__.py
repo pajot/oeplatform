@@ -12,9 +12,6 @@ from .util import content2json, load_content, load_content_as_json
 
 
 class APITestCase(TestCase):
-    test_schema = "test"
-    test_table = "population2"
-
     @classmethod
     def setUpClass(cls):
 
@@ -48,6 +45,10 @@ class APITestCase(TestCase):
         cls.other_token = Token.objects.get(user=cls.other_user)
 
         cls.client = Client()
+
+    def setUp(self) -> None:
+        self.test_schema = "test"
+        self.test_table = "test" + self.__class__.__name__.lower()
 
     def assertDictEqualKeywise(self, d1, d2, excluded=None):
         if not excluded:
@@ -168,3 +169,6 @@ class APITestCase(TestCase):
         self.assertEqual(
             resp.status_code, 200, resp.json().get("reason", "No reason returned")
         )
+
+class APITestCaseWithTable(TestCase):
+    pass

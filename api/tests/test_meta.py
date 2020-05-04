@@ -10,6 +10,7 @@ from omi.dialects.oep.dialect import OEP_V_1_4_Dialect
 
 class TestPut(APITestCase):
     def setUp(self):
+        super(TestPut, self).setUp()
         structure_data = {
             "constraints": [
                 {

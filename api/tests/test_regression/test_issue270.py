@@ -5,6 +5,7 @@ from api.tests import APITestCase
 
 class Test270(APITestCase):
     def setUp(self):
+        super(Test270, self).setUp()
         structure = {
             "constraints": [
                 {

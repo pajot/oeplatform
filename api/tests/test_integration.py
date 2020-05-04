@@ -50,9 +50,6 @@ class IntegrationTestCase(APITestCase):
         self.step_modify_data()
         self.step_remove_data()
 
-    def setUp(self):
-        pass
-
     def checkStructure(self):
         response = self.__class__.client.get(
             "/api/v0/schema/{schema}/tables/{table}/".format(

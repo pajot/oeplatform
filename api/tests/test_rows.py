@@ -10,6 +10,7 @@ from .util import content2json, load_content, load_content_as_json
 
 class TestPut(APITestCase):
     def setUp(self):
+        super(TestPut, self).setUp()
         structure_data = {
             "constraints": [
                 {
@@ -523,9 +524,9 @@ class TestPost(APITestCase):
 
 
 class TestGet(APITestCase):
-    @classmethod
-    def setUpClass(cls):
-        super(TestGet, cls).setUpClass()
+
+    def setUp(cls):
+        super(TestGet, cls).setUp()
         cls.rows = [
             {
                 "id": 1,
@@ -601,9 +602,8 @@ class TestGet(APITestCase):
             "reason", "No reason returned"
         )
 
-    @classmethod
-    def tearDownClass(self):
-        super(TestGet, self).tearDownClass()
+    def tearDown(self):
+        super(TestGet, self).tearDown()
         meta_schema = actions.get_meta_schema_name(self.test_schema)
         if actions.has_table(dict(table=self.test_table, schema=self.test_schema)):
             actions.perform_sql(
@@ -702,10 +702,9 @@ class TestGet(APITestCase):
 
 
 class TestDelete(APITestCase):
-    @classmethod
-    def setUpClass(cls):
-        super(TestDelete, cls).setUpClass()
-        cls.rows = [
+    def setUp(self):
+        super(TestDelete, self).setUp()
+        self.rows = [
             {
                 "id": 1,
                 "name": "John Doe",
@@ -713,7 +712,6 @@ class TestDelete(APITestCase):
                 "geom": "Point(-71.160281 42.258729)",
             }
         ]
-        cls.test_table = "test_table_rows"
         structure_data = {
             "constraints": [
                 {
@@ -746,18 +744,18 @@ class TestDelete(APITestCase):
             ],
         }
 
-        c_basic_resp = cls.client.put(
+        c_basic_resp = self.client.put(
             "/api/v0/schema/{schema}/tables/{table}/".format(
-                schema=cls.test_schema, table=cls.test_table
+                schema=self.test_schema, table=self.test_table
             ),
             data=json.dumps({"query": structure_data}),
-            HTTP_AUTHORIZATION="Token %s" % cls.token,
+            HTTP_AUTHORIZATION="Token %s" % self.token,
             content_type="application/json",
         )
 
         assert c_basic_resp.status_code == 201, c_basic_resp.json()
 
-        cls.rows = [
+        self.rows = [
             {
                 "id": i,
                 "name": "Mary Doe",
@@ -767,12 +765,12 @@ class TestDelete(APITestCase):
             for i in range(100)
         ]
 
-        response = cls.client.post(
+        response = self.client.post(
             "/api/v0/schema/{schema}/tables/{table}/rows/new".format(
-                schema=cls.test_schema, table=cls.test_table
+                schema=self.test_schema, table=self.test_table
             ),
-            data=json.dumps({"query": cls.rows}),
-            HTTP_AUTHORIZATION="Token %s" % cls.token,
+            data=json.dumps({"query": self.rows}),
+            HTTP_AUTHORIZATION="Token %s" % self.token,
             content_type="application/json",
         )
 
@@ -780,9 +778,8 @@ class TestDelete(APITestCase):
             "reason", "No reason returned"
         )
 
-    @classmethod
-    def tearDownClass(self):
-        super(TestDelete, self).tearDownClass()
+    def tearDown(self):
+        super(TestDelete, self).tearDown()
         meta_schema = actions.get_meta_schema_name(self.test_schema)
         if actions.has_table(dict(table=self.test_table, schema=self.test_schema)):
             actions.perform_sql(
