@@ -1,0 +1,39 @@
+{% extends "modelview/detail_view.html" %}
+{% load bootstrap4 %}
+{% load static %}
+{% load modelview_extras %}
+
+{% block main-right-sidebar-content-actions %}
+  <a class="btn btn-info" href="edit"><span class="fas fa-edit"></span>Edit</a>
+{% endblock main-right-sidebar-content-actions %}
+
+{% block factsheets_content %}
+  <h3>{{ model.name }}</h3>
+  <div class="card-container">
+    <div class="card">
+      <div class="card-header">
+        <a data-toggle="collapse" href="#BasicInformation">General Information</a>
+      </div>
+      <div id="BasicInformation" class="title= collapse in card-body">
+        <table class="profiletable">
+          {% include 'modelview/model_snippet.html' with model=model field='name_of_the_study' %}
+          {% include 'modelview/model_snippet.html' with model=model field='abbreviation' %}
+          {% include 'modelview/model_snippet.html' with model=model field='subtitle' %}
+          {{ model.studies }}
+          {% include 'modelview/model_snippet.html' with model=model field='aim' %}
+          {% include 'modelview/model_snippet.html' with model=model field='contact_person' %}
+          {% include 'modelview/model_snippet.html' with model=model field='contact_email' %}
+          {% include 'modelview/model_snippet.html' with model=model field='client' %}
+          {% include 'modelview/model_snippet.html' with model=model field='funding_source' %}
+          {% include 'modelview/model_snippet.html' with model=model field='funding_contact' %}
+          {{ model.oep_data }}
+          {% include 'modelview/model_snippet.html' with model=model field='non_oep_data' %}
+          {% include 'modelview/model_snippet.html' with model=model field='citation_reference' %}
+          {% include 'modelview/model_snippet.html' with model=model field='citation_doi' %}
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+{% endblock %}

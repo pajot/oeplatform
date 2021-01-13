@@ -29,7 +29,7 @@ from .forms import (
     EnergyscenarioForm,
     EnergystudyForm,
 )
-from .models import Energyframework, Energymodel, Energyscenario, Energystudy
+from .models import Energyframework, Energymodel, Scenario as Energyscenario, Study as Energystudy
 
 
 def getClasses(sheettype):
@@ -83,9 +83,9 @@ def listsheets(request, sheettype):
     fields = {}
     defaults = set()
     if sheettype == "scenario":
-        models = [(m.pk, m.name_of_scenario) for m in c.objects.all()]
+        models = [(m.pk, m.name) for m in c.objects.all()]
     elif sheettype == "studie":
-        raise Http404
+        models = [(m.pk, m.name_of_the_study) for m in c.objects.all()]
     else:
         fields = FRAMEWORK_VIEW_PROPS if sheettype == "framework" else MODEL_VIEW_PROPS
         defaults = (
@@ -128,10 +128,7 @@ def show(request, sheettype, model_name):
     c, _ = getClasses(sheettype)
     model = get_object_or_404(c, pk=model_name)
     model_study = []
-    if sheettype == "scenario":
-        c_study, _ = getClasses("studie")
-        model_study = get_object_or_404(c_study, pk=model.study.pk)
-    else:
+    if not sheettype in ["scenario", "studie"]:
         d = load_tags()
         model.tags = [d[tag_id] for tag_id in model.tags]
 
@@ -155,7 +152,7 @@ def show(request, sheettype, model_name):
     return render(
         request,
         ("modelview/{0}.html".format(sheettype)),
-        {"model": model, "model_study": model_study, "gh_org": org, "gh_repo": repo, "displaySheetType": sheettype.capitalize()},
+        {"model": model, "gh_org": org, "gh_repo": repo, "displaySheetType": sheettype.capitalize()},
     )
 
 
@@ -256,20 +253,11 @@ class FSAdd(LoginRequiredMixin, View):
         c, f = getClasses(sheettype)
         if method == "add":
             form = f()
-            if sheettype == "scenario":
-                c_study, f_study = getClasses("studie")
-                formstudy = f_study()
-                return render(
-                    request,
-                    "modelview/new{}.html".format(sheettype),
-                    {"form": form, "formstudy": formstudy, "method": method},
-                )
-            else:
-                return render(
-                    request,
-                    "modelview/edit{}.html".format(sheettype),
-                    {"form": form, "method": method},
-                )
+            return render(
+                request,
+                "modelview/edit{}.html".format(sheettype),
+                {"form": form, "method": method},
+            )
         else:
             model = get_object_or_404(c, pk=model_name)
             form = f(instance=model)
@@ -282,48 +270,18 @@ class FSAdd(LoginRequiredMixin, View):
     def post(self, request, sheettype, method="add", pk=None):
         c, f = getClasses(sheettype)
         form = processPost(request.POST, c, f, files=request.FILES, pk=pk)
-        if sheettype == "scenario" and method == "add":
-            c_study, f_study = getClasses("studie")
-            formstudy = processPost(
-                request.POST, c_study, f_study, files=request.FILES, pk=pk
-            )
-            errorsStudy = []
-            if request.POST["new"] == "True":
-                if formstudy.is_valid():
-                    n = formstudy.save()
-                    form = processPost(
-                        request.POST, c, f, files=request.FILES, pk=pk, key=n.pk
-                    )
-                else:
-                    errorsStudy = [
-                        (field.label, str(field.errors.data[0].message))
-                        for field in formstudy
-                        if field.errors
-                    ]
-            if form.is_valid() and errorsStudy == []:
-                m = form.save()
-                return redirect(
-                    "/factsheets/{sheettype}s/{model}".format(
-                        sheettype=sheettype, model=m.pk
-                    )
-                )
+        if sheettype == "scenario":
+            form = EnergyscenarioForm(request.POST)
+            if form.is_valid():
+                n = form.save()
+                return redirect("/factsheets/scenarios/"+str(n.id))
             else:
-                errors = [
-                    (field.label, str(field.errors.data[0].message))
-                    for field in form
-                    if field.errors
-                ] + errorsStudy
                 return render(
                     request,
-                    "modelview/new{}.html".format(sheettype),
-                    {
-                        "form": form,
-                        "formstudy": formstudy,
-                        "name": pk,
-                        "method": method,
-                        "errors": errors,
-                    },
+                    "modelview/editscenario.html".format(sheettype),
+                    {"form": form},
                 )
+
         else:
             if form.is_valid():
 
