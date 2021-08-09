@@ -20,22 +20,22 @@
     $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
     });
- 
+
       var confirmOnLeave = function(msg) {
- 
+
       window.onbeforeunload = function (e) {
         e = e || window.event;
         msg = msg || '';
- 
+
         // For IE and Firefox
         if (e) {e.returnValue = msg;}
- 
+
         // For Chrome and Safari
         return msg;
     };
- 
+
 };
- 
+
 confirmOnLeave();
 
 </script>
@@ -78,7 +78,7 @@ confirmOnLeave();
         <!-- {% include 'modelview/editmodel_snippet.html' with field=form.version %}
         {% include 'modelview/editmodel_snippet.html' with field=form.open_source %}
         {% include 'modelview/editmodel_snippet.html' with field=form.license %}   -->
-        {% include 'modelview/editmodel_snippet.html' with field=form.logo %}  
+        {% include 'modelview/editmodel_snippet.html' with field=form.logo %}
         </table>
     </div>
     <div id="General" class="tab-pane fade in">
@@ -91,13 +91,13 @@ confirmOnLeave();
             {% include 'modelview/editmodel_snippet.html' with field=form.institutions%}
         </table>
         <table class="formtable">
-                    <th> Geographical Scope 
+                    <th> Geographical Scope
                         <i data-toggle="tooltip"   title="What geographical scope was modelled with the framework?">
                             <span class='fas fa-question '></span>
                         </a>
                     </th>
                     <td>
-                        <table class="checktable" align="center"> 
+                        <table class="checktable" align="center">
                             {% include 'modelview/editmodel_snippet.html' with field=form.gs_global %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.gs_regional %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.gs_national %}
@@ -108,13 +108,13 @@ confirmOnLeave();
                      </td>
         </table>
         <table class="formtable">
-                    <th> Sectoral Scope 
+                    <th> Sectoral Scope
                         <i data-toggle="tooltip"   title="What sectoral scope was modelled with the framework?">
                             <span class='fas fa-question '></span>
                         </a>
                     </th>
                     <td>
-                        <table class="checktable" align="center"> 
+                        <table class="checktable" align="center">
                             {% include 'modelview/editmodel_snippet.html' with field=form.ss_electricity %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.ss_heat %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.ss_transport %}
@@ -131,7 +131,7 @@ confirmOnLeave();
                         </a>
                     </th>
                     <td>
-                        <table class="checktable" align="center"> 
+                        <table class="checktable" align="center">
                             {% include 'modelview/editmodel_snippet.html' with field=form.gps_forecast %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.gps_explore %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.gps_backcast %}
@@ -146,7 +146,7 @@ confirmOnLeave();
                         </a>
                     </th>
                     <td>
-                        <table class="checktable" align="center"> 
+                        <table class="checktable" align="center">
                             {% include 'modelview/editmodel_snippet.html' with field=form.sps_energydemand %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.sps_energysupply %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.sps_impacts %}
@@ -181,8 +181,8 @@ confirmOnLeave();
                 sty_no = ''
             if (cb.checked) {
                 sty_no = 'none'
-                sty_yes = ''                
-            } 
+                sty_yes = ''
+            }
             for (i = 0; i < yes.length; i++) {
                 yes[i].style.display = sty_yes;
             }
@@ -195,12 +195,12 @@ confirmOnLeave();
         <table class="formtable">
         {% include 'modelview/editmodel_snippet.html' with field=form.gui %}
         <table class="formtable">
-                    <th> Programming Framework 
+                    <th> Programming Framework
                         <i data-toggle="tooltip"   title="Which programming framework/language is used to develop the framework?">
                             <span class='fas fa-question '></span>
                         </a></th>
                     <td>
-                        <table class="checktable" align="center"> 
+                        <table class="checktable" align="center">
                             {% include 'modelview/editmodel_snippet.html' with field=form.pf_GAMS %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.pf_Python %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.pf_C %}
@@ -218,12 +218,12 @@ confirmOnLeave();
                      </td>
         </table>
         <table class="formtable">
-                    <th> External Solver                         
+                    <th> External Solver
                         <i data-toggle="tooltip"   title="Which external solver(s) can the framework apply? Please list!">
                             <span class='fas fa-question '></span>
                         </a></th>
                     <td>
-                        <table class="checktable" align="center"> 
+                        <table class="checktable" align="center">
                             {% include 'modelview/editmodel_snippet.html' with field=form.es_CPLEX %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.es_Gurobi %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.es_Coin %}
@@ -234,12 +234,12 @@ confirmOnLeave();
                      </td>
         </table>
         <table class="formtable">
-                    <th> Input Data Format 
+                    <th> Input Data Format
                         <i data-toggle="tooltip"   title="Which input format(s) can the framework apply? Please list!">
                             <span class='fas fa-question '></span>
                         </a></th>
                     <td>
-                        <table class="checktable" align="center"> 
+                        <table class="checktable" align="center">
                             {% include 'modelview/editmodel_snippet.html' with field=form.idf_Pandas %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.idf_Python_dicts %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.idf_XLSX %}
@@ -263,7 +263,7 @@ confirmOnLeave();
                             <span class='fas fa-question '></span>
                         </a></th>
                     <td>
-                        <table class="checktable" align="center"> 
+                        <table class="checktable" align="center">
                             {% include 'modelview/editmodel_snippet.html' with field=form.odf_Pandas %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.odf_Python_dicts %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.odf_XLSX %}
@@ -282,15 +282,15 @@ confirmOnLeave();
         {% include 'modelview/editmodel_snippet.html' with field=form.plotting_functionalities %}
         </table>
         <table class="formtable">
-                    <th> The analytical approach 
+                    <th> The analytical approach
                         <i data-toggle="tooltip"   title="What is the analytical approach that the framework applies?">
                             <span class='fas fa-question '></span>
                         </a></th>
                     <td>
-                        <table class="checktable" align="center"> 
-        {% include 'modelview/editmodel_snippet.html' with field=form.ap_TopDown %}        
-        {% include 'modelview/editmodel_snippet.html' with field=form.ap_BottomUp %}        
-        {% include 'modelview/editmodel_snippet.html' with field=form.ap_Hybrid %}        
+                        <table class="checktable" align="center">
+        {% include 'modelview/editmodel_snippet.html' with field=form.ap_TopDown %}
+        {% include 'modelview/editmodel_snippet.html' with field=form.ap_BottomUp %}
+        {% include 'modelview/editmodel_snippet.html' with field=form.ap_Hybrid %}
         {% include 'modelview/editmodel_snippet.html' with field=form.ap_Other %}
                         </table>
                      </td>
@@ -303,7 +303,7 @@ confirmOnLeave();
                         <i data-toggle="tooltip"   title="What is the mathematical approach that the framework applies?">
                             <span class='fas fa-question '></span>
                     <td>
-                        <table class="checktable" align="center"> 
+                        <table class="checktable" align="center">
                             {% include 'modelview/editmodel_snippet.html' with field=form.ma_lp %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.ma_mip %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.ma_dp %}
@@ -313,13 +313,13 @@ confirmOnLeave();
                         </table>
                      </td>
         </table>
-     
+
         <table class="formtable">
                     <th>The underlying methodology
                         <i data-toggle="tooltip"   title="What underlying methodology(-y/-ies) is the framework based on?">
                             <span class='fas fa-question '></span>
                     <td>
-                        <table class="checktable" align="center"> 
+                        <table class="checktable" align="center">
                             {% include 'modelview/editmodel_snippet.html' with field=form.um_econometric %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.um_me %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.um_ee %}
@@ -340,7 +340,7 @@ confirmOnLeave();
                         <i data-toggle="tooltip"   title="If the framework is applying optimization, what objectives are commonly formulated?">
                             <span class='fas fa-question '></span>
                     <td>
-                        <table class="checktable" align="center"> 
+                        <table class="checktable" align="center">
                             {% include 'modelview/editmodel_snippet.html' with field=form.oft_mtsc %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.oft_mce %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.oft_mlce %}
@@ -352,7 +352,7 @@ confirmOnLeave();
 <!--
         {% include 'modelview/editmodel_snippet.html' with field=form.modelling_software %}
         {% include 'modelview/editmodel_snippet.html' with field=form.interal_data_processing_software %}
-        {% include 'modelview/editmodel_snippet.html' with field=form.external_optimizer add=form.external_optimizer_yes_text %} 
+        {% include 'modelview/editmodel_snippet.html' with field=form.external_optimizer add=form.external_optimizer_yes_text %}
         {% include 'modelview/editmodel_snippet.html' with field=form.additional_software %}
 
 -->
@@ -379,7 +379,7 @@ confirmOnLeave();
                             <span class='fas fa-question '></span>
                     </a>
                     <td>
-                        <table class="checktable" align="center"> 
+                        <table class="checktable" align="center">
                             {% include 'modelview/editmodel_snippet.html' with field=form.support_forum %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.support_community %}
                             {% include 'modelview/editmodel_snippet.html' with field=form.support_workshop %}
@@ -392,17 +392,18 @@ confirmOnLeave();
         <table class="formtable">
             {% include 'modelview/editmodel_snippet.html' with field=form.user_documentation %}
             {% include 'modelview/editmodel_snippet.html' with field=form.installation_guide %}
+            {% include 'modelview/editmodel_snippet.html' with field=form.link_to_installation_guide %}
             {% include 'modelview/editmodel_snippet.html' with field=form.link_to_code_documentation %}
             {% include 'modelview/editmodel_snippet.html' with field=form.skills_basic %}
             {% include 'modelview/editmodel_snippet.html' with field=form.skills_advanced %}
         </table>
     </div>
-    
+
     <div id="Software" class="tab-pane fade in">
         <table class="formtable">
         {% include 'modelview/editmodel_snippet.html' with field=form.modelling_software %}
         {% include 'modelview/editmodel_snippet.html' with field=form.interal_data_processing_software %}
-        {% include 'modelview/editmodel_snippet.html' with field=form.external_optimizer add=form.external_optimizer_yes_text %} 
+        {% include 'modelview/editmodel_snippet.html' with field=form.external_optimizer add=form.external_optimizer_yes_text %}
         {% include 'modelview/editmodel_snippet.html' with field=form.additional_software %}
         {% include 'modelview/editmodel_snippet.html' with field=form.gui %}
         </table>
@@ -412,13 +413,13 @@ confirmOnLeave();
         {% include 'modelview/editmodel_snippet.html' with field=form.fixed_units %}
         </table>
         <table class="formtable">
-        <th> Renewable Technology Inclusion                        
+        <th> Renewable Technology Inclusion
             <i data-toggle="tooltip"   title="Which renewable energy technologies are already modelled with the framework?">
                 <span class='fas fa-question '></span>
             </a>
         </th>
             <td>
-                <table class="checktable" align="center"> 
+                <table class="checktable" align="center">
                     {% include 'modelview/editmodel_snippet.html' with field=form.Hydro %}
                     {% include 'modelview/editmodel_snippet.html' with field=form.Solar %}
                     {% include 'modelview/editmodel_snippet.html' with field=form.Geothermal %}
@@ -435,7 +436,7 @@ confirmOnLeave();
                 <span class='fas fa-question '></span>
             </a></th>
             <td>
-                <table class="checktable" align="center"> 
+                <table class="checktable" align="center">
                     {% include 'modelview/editmodel_snippet.html' with field=form.st_hydro %}
                     {% include 'modelview/editmodel_snippet.html' with field=form.st_battery %}
                     {% include 'modelview/editmodel_snippet.html' with field=form.st_air %}
@@ -449,7 +450,7 @@ confirmOnLeave();
                 <span class='fas fa-question '></span>
             </a></th>
             <td>
-                <table class="checktable" align="center"> 
+                <table class="checktable" align="center">
                     {% include 'modelview/editmodel_snippet.html' with field=form.dc_combustion %}
                     {% include 'modelview/editmodel_snippet.html' with field=form.dc_battery %}
                     {% include 'modelview/editmodel_snippet.html' with field=form.dc_v2grid %}
@@ -465,7 +466,7 @@ confirmOnLeave();
                 <span class='fas fa-question '></span>
             </a></th>
             <td>
-                <table class="checktable" align="center"> 
+                <table class="checktable" align="center">
                     {% include 'modelview/editmodel_snippet.html' with field=form.rd_Heating %}
                     {% include 'modelview/editmodel_snippet.html' with field=form.rd_Lighting %}
                     {% include 'modelview/editmodel_snippet.html' with field=form.rd_Cooking %}
@@ -480,7 +481,7 @@ confirmOnLeave();
                 <span class='fas fa-question '></span>
             </a></th>
             <td>
-                <table class="checktable" align="center"> 
+                <table class="checktable" align="center">
                     {% include 'modelview/editmodel_snippet.html' with field=form.cd_Offices %}
                     {% include 'modelview/editmodel_snippet.html' with field=form.cd_Warehouses %}
                     {% include 'modelview/editmodel_snippet.html' with field=form.cd_Retail %}
@@ -494,7 +495,7 @@ confirmOnLeave();
                 <span class='fas fa-question '></span>
             </a></th>
             <td>
-                <table class="checktable" align="center"> 
+                <table class="checktable" align="center">
                     {% include 'modelview/editmodel_snippet.html' with field=form.gm_singleNode %}
                     {% include 'modelview/editmodel_snippet.html' with field=form.gm_TranshipmentModel %}
                     {% include 'modelview/editmodel_snippet.html' with field=form.gm_LinearOptimal %}
@@ -507,7 +508,7 @@ confirmOnLeave();
                 <span class='fas fa-question '></span>
             </a></th>
             <td>
-                <table class="checktable" align="center"> 
+                <table class="checktable" align="center">
                     {% include 'modelview/editmodel_snippet.html' with field=form.ci_FuelPrices %}
                     {% include 'modelview/editmodel_snippet.html' with field=form.ci_FuelHandling %}
                     {% include 'modelview/editmodel_snippet.html' with field=form.ci_Investment %}
@@ -528,7 +529,7 @@ confirmOnLeave();
                 <span class='fas fa-question '></span>
             </a></th>
             <td>
-                <table class="checktable" align="center"> 
+                <table class="checktable" align="center">
                     {% include 'modelview/editmodel_snippet.html' with field=form.ts_Minutely %}
                     {% include 'modelview/editmodel_snippet.html' with field=form.ts_Hourly %}
                     {% include 'modelview/editmodel_snippet.html' with field=form.ts_Monthly %}
@@ -544,7 +545,7 @@ confirmOnLeave();
                 <span class='fas fa-question '></span>
             </a></th>
             <td>
-                <table class="checktable" align="center"> 
+                <table class="checktable" align="center">
                     {% include 'modelview/editmodel_snippet.html' with field=form.th_st %}
                     {% include 'modelview/editmodel_snippet.html' with field=form.th_mt %}
                     {% include 'modelview/editmodel_snippet.html' with field=form.th_lt %}
